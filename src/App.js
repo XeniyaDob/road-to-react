@@ -4,6 +4,7 @@ function getTitle(title) {
   return title;
 }
 
+
 const list = [
   {
     id: "1",
@@ -39,11 +40,13 @@ const list = [
   },
 ];
 
+
 function App() {
   //view part of react
   return (
     <div>
       <h1>Hello {getTitle("React")}</h1>
+
 
       <label htmlFor="search">Search: </label>
       <input id="search" type="text" />
@@ -63,6 +66,10 @@ function App() {
           );
         })}
       </ul>
+
+      <label htmlFor="search">Search: </label>
+      <input id="search" type="text" />
+
     </div>
   );
 }
