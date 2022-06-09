@@ -41,11 +41,62 @@ const list = [
 ];
 
 
+let List = () => (
+  <ul>
+    {list.map(function (item) {
+      return (
+        <li key={item.id}>
+          <h2>{item.name}</h2>
+          <span>
+            <img src={item.url} alt={item.name} />
+          </span>
+          <p>{item.diameter}</p>
+          <p>{item.desc}</p>
+        </li>
+      );
+    })}
+  </ul>
+);
+
+// function List() {
+//   return (
+//     <ul>
+//       {list.map(function (item) {
+//         return (
+//           <li key={item.id}>
+//             <h2>{item.name}</h2>
+//             <span>
+//               <img src={item.url} alt={item.name} />
+//             </span>
+//             <p>{item.diameter}</p>
+//             <p>{item.desc}</p>
+//           </li>
+//         );
+//       })}
+//     </ul>
+//   );
+// }
+
+function Search() {
+  return (
+    <div>
+      <label htmlFor="search">Search: </label>
+      <input id="search" type="text" />
+    </div>
+  );
+}
+
+
 function App() {
   //view part of react
   return (
     <div>
       <h1>Hello {getTitle("React")}</h1>
+
+      <Search />
+      <hr />
+      <List />
+
 
 
       <label htmlFor="search">Search: </label>
