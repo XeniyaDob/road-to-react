@@ -4,6 +4,7 @@ function getTitle(title) {
   return title;
 }
 
+
 const list = [
   {
     id: "1",
@@ -38,6 +39,7 @@ const list = [
     url: "img/mars.jpg",
   },
 ];
+
 
 let List = () => (
   <ul>
@@ -84,14 +86,41 @@ function Search() {
   );
 }
 
+
 function App() {
   //view part of react
   return (
     <div>
       <h1>Hello {getTitle("React")}</h1>
+
       <Search />
       <hr />
       <List />
+
+
+
+      <label htmlFor="search">Search: </label>
+      <input id="search" type="text" />
+      <hr />
+      {/* render the list */}
+      <ul>
+        {list.map(function (item) {
+          return (
+            <li key={item.id}>
+              <h2>{item.name}</h2>
+              <span>
+                <img src={item.url} alt={item.name} />
+              </span>
+              <p>{item.diameter}</p>
+              <p>{item.desc}</p>
+            </li>
+          );
+        })}
+      </ul>
+
+      <label htmlFor="search">Search: </label>
+      <input id="search" type="text" />
+
     </div>
   );
 }
