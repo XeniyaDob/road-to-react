@@ -1,54 +1,6 @@
 import * as React from "react";
 
-function getTitle(title) {
-  return title;
-}
-
-let List = (props) => {
-  return (
-    <ul>
-      {props.list.map(function (item) {
-        return <Item key={item.objectID} item={item} />;
-      })}
-    </ul>
-  );
-};
-
-const Item = (props) => {
-  return (
-    <li key={props.item.objectID}>
-      <h2>{props.item.name}</h2>
-      <span>
-        <img src={props.item.url} alt={props.item.name} />
-      </span>
-      <p>{props.item.diameter}</p>
-      <p>{props.item.desc}</p>
-    </li>
-  );
-};
-function Search() {
-  const handleChange = (event) => {
-    console.log(event.target.value);
-  };
-
-  const handleMouseOver = (event) => {
-    console.log(event.target.value);
-  };
-
-  return (
-    <div>
-      <label htmlFor="search">Search: </label>
-      <input
-        id="search"
-        type="text"
-        onChange={handleChange}
-        onMouseOver={handleMouseOver}
-      />
-    </div>
-  );
-}
-
-function App() {
+const App = () => {
   const planets = [
     {
       objectID: 1,
@@ -92,6 +44,51 @@ function App() {
       <List list={planets} />
     </div>
   );
+};
+
+function getTitle(title) {
+  return title;
 }
 
+const Search = () => {
+  const [searchTerm, setSearchTerm] = React.useState("");
+  console.log(`Rendering search with  searchTerm: ${searchTerm}`);
+  const handleChange = (event) => {
+    console.log(`Before setting searchTerm: ${searchTerm}`);
+    setSearchTerm(event.target.value);
+    console.log(`After setting searchTerm: ${searchTerm}`);
+  };
+
+  return (
+    <div>
+      <label htmlFor="search">Search: </label>
+      <input id="search" type="text" onChange={handleChange} />
+      <span>
+        Searching for <strong>{searchTerm}</strong>
+      </span>
+    </div>
+  );
+};
+const List = (props) => {
+  return (
+    <ul>
+      {props.list.map(function (item) {
+        return <Item key={item.objectID} item={item} />;
+      })}
+    </ul>
+  );
+};
+
+const Item = (props) => {
+  return (
+    <li key={props.item.objectID}>
+      <h2>{props.item.name}</h2>
+      <span>
+        <img src={props.item.url} alt={props.item.name} />
+      </span>
+      <p>{props.item.diameter}</p>
+      <p>{props.item.desc}</p>
+    </li>
+  );
+};
 export default App;
