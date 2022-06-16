@@ -1,6 +1,7 @@
 import * as React from "react";
 
 const App = () => {
+  //console.log("App renders");
   const planets = [
     {
       objectID: 1,
@@ -36,27 +37,32 @@ const App = () => {
     },
   ];
 
+  const handleSearch = (event) => {
+    console.log(event.target.value);
+  };
   return (
     <div>
       <h1>Hello {getTitle("React")}</h1>
-      <Search />
+      <Search onSearch={handleSearch} />
       <hr />
       <List list={planets} />
     </div>
   );
 };
 
-function getTitle(title) {
+const getTitle = (title) => {
   return title;
-}
+};
 
-const Search = () => {
+const Search = (props) => {
+  //console.log("Search renders");
   const [searchTerm, setSearchTerm] = React.useState("");
-  console.log(`Rendering search with  searchTerm: ${searchTerm}`);
+  //console.log(`Rendering search with  searchTerm: ${searchTerm}`);
   const handleChange = (event) => {
-    console.log(`Before setting searchTerm: ${searchTerm}`);
+    //console.log(`Before setting searchTerm: ${searchTerm}`);
     setSearchTerm(event.target.value);
-    console.log(`After setting searchTerm: ${searchTerm}`);
+    //console.log(`After setting searchTerm: ${searchTerm}`);
+    props.onSearch(event);
   };
 
   return (
@@ -69,7 +75,9 @@ const Search = () => {
     </div>
   );
 };
+
 const List = (props) => {
+  //console.log("List renders");
   return (
     <ul>
       {props.list.map(function (item) {
