@@ -95,16 +95,16 @@ const List = (props) => {
   );
 };
 
-const Item = (props) => {
+const Item = ({ item }) => {
   return (
-    <li key={props.item.objectID}>
-      <h2>{props.item.name}</h2>
+    <li key={item.objectID}>
+      <h2>{item.name}</h2>
       <span>
-        <img src={props.item.img} alt={props.item.name} />
+        <img src={item.img} alt={item.name} />
       </span>
-      <p>{props.item.moons}</p>
-      <p>{props.item.diameter}</p>
-      <p>{props.item.desc}</p>
+      <p>{item.moons}</p>
+      <p>{item.diameter}</p>
+      <p>{item.desc}</p>
     </li>
   );
 };
