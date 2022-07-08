@@ -2,7 +2,6 @@ import * as React from "react";
 //import img from "img";
 
 const App = () => {
-  //console.log("App renders");
   const planets = [
     {
       objectID: 1,
@@ -37,17 +36,19 @@ const App = () => {
       img: "./mars.jpg",
     },
   ];
-  //Second, use the stored value, if a value exists,
-  //to set the initial state of the searchTerm in React’s useState Hook.
-  //Otherwise, default to our initial state (here “React”) as before:
-  const [searchTerm, setSearchTerm] = React.useState(
-    localStorage.getItem("search") || "React"
-  );
-  //First, use the local storage to store the searchTerm
-  //accompanied by an identifier whenever a user types into the HTML input field:
-  React.useEffect(() => {
-    localStorage.setItem("search", searchTerm);
-  }, [searchTerm]);
+
+  const useSemiPersistentState = (key, initialState) => {
+    const [value, setValue] = React.useState(
+      localStorage.getItem(key) || initialState
+    );
+    React.useEffect(() => {
+      localStorage.setItem(key, value);
+    }, [value, key]);
+
+    return [value, setValue];
+  };
+
+  const [searchTerm, setSearchTerm] = useSemiPersistentState("search", "React");
 
   const handleSearch = (event) => {
     console.log(event.target.value);
