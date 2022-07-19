@@ -61,36 +61,31 @@ const App = () => {
   return (
     <>
       <h1>Hello {getTitle("React")}</h1>
-      <Search onSearch={handleSearch} searchTerm={searchTerm} />
+      <InputWithLabel
+        id="search"
+        label="Search: "
+        value={searchTerm}
+        onInputChange={handleSearch}
+      />
+
       <hr />
       <List list={searchedPlanets} />
     </>
   );
 };
 
-const getTitle = (title) => {
-  return title;
-};
-
-const Search = (props) => {
-  const handleChange = (event) => {
-    props.onSearch(event);
-  };
-
+const InputWithLabel = ({ id, label, value, type = "text", onInputChange }) => {
   return (
     <>
-      <label htmlFor="search">Search: </label>
-      <input
-        id="search"
-        value={props.search}
-        type="text"
-        onChange={handleChange}
-      />
-      <span>
-        Searching for <strong>{props.searchTerm}</strong>
-      </span>
+      <label htmlFor={id}>{label}</label>
+      &nbsp;
+      <input id={id} type={type} value={value} onChange={onInputChange} />
     </>
   );
+};
+
+const getTitle = (title) => {
+  return title;
 };
 
 const List = (props) => {
