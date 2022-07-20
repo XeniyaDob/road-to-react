@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useState, useEffect } from "react";
 
 const App = () => {
   const planets = [
@@ -37,10 +37,10 @@ const App = () => {
   ];
 
   const useSemiPersistentState = (key, initialState) => {
-    const [value, setValue] = React.useState(
+    const [value, setValue] = useState(
       localStorage.getItem(key) || initialState
     );
-    React.useEffect(() => {
+    useEffect(() => {
       localStorage.setItem(key, value);
     }, [value, key]);
 
@@ -63,10 +63,11 @@ const App = () => {
       <h1>Hello {getTitle("React")}</h1>
       <InputWithLabel
         id="search"
-        label="Search: "
         value={searchTerm}
         onInputChange={handleSearch}
-      />
+      >
+        <strong>Search: </strong>
+      </InputWithLabel>
 
       <hr />
       <List list={searchedPlanets} />
@@ -74,10 +75,16 @@ const App = () => {
   );
 };
 
-const InputWithLabel = ({ id, label, value, type = "text", onInputChange }) => {
+const InputWithLabel = ({
+  id,
+  value,
+  type = "text",
+  onInputChange,
+  children,
+}) => {
   return (
     <>
-      <label htmlFor={id}>{label}</label>
+      <label htmlFor={id}>{children}</label>
       &nbsp;
       <input id={id} type={type} value={value} onChange={onInputChange} />
     </>
@@ -88,11 +95,11 @@ const getTitle = (title) => {
   return title;
 };
 
-const List = (props) => {
+const List = ({ list }) => {
   //console.log("List renders");
   return (
     <ul>
-      {props.list.map(function (item) {
+      {list.map(function (item) {
         return <Item key={item.objectID} item={item} />;
       })}
     </ul>
