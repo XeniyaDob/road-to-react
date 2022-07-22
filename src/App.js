@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 
 const App = () => {
-  const planets = [
+  const initialPlanets = [
     {
       objectID: 1,
       name: "Mercury",
@@ -47,7 +47,20 @@ const App = () => {
     return [value, setValue];
   };
 
-  const [searchTerm, setSearchTerm] = useSemiPersistentState("search", "React");
+  const [searchTerm, setSearchTerm] = useSemiPersistentState(
+    "search",
+    "Planet"
+  );
+
+  const [planets, setPlanets] = useState(initialPlanets);
+
+  const handleRemovePlanet = (item) => {
+    const newPlanets = planets.filter(
+      (planet) => item.objectID !== planet.objectID
+    );
+
+    setPlanets(newPlanets);
+  };
 
   const handleSearch = (event) => {
     console.log(event.target.value);
@@ -60,7 +73,7 @@ const App = () => {
 
   return (
     <>
-      <h1>Hello {getTitle("React")}</h1>
+      <h1>Hello {getTitle("Universe")}</h1>
       <InputWithLabel
         id="search"
         value={searchTerm}
@@ -71,7 +84,7 @@ const App = () => {
       </InputWithLabel>
 
       <hr />
-      <List list={searchedPlanets} />
+      <List list={searchedPlanets} onRemoveItem={handleRemovePlanet} />
     </>
   );
 };
@@ -111,18 +124,20 @@ const getTitle = (title) => {
   return title;
 };
 
-const List = ({ list }) => {
+const List = ({ list, onRemoveItem }) => {
   //console.log("List renders");
   return (
     <ul>
       {list.map(function (item) {
-        return <Item key={item.objectID} item={item} />;
+        return (
+          <Item key={item.objectID} item={item} onRemoveItem={onRemoveItem} />
+        );
       })}
     </ul>
   );
 };
 
-const Item = ({ item }) => {
+const Item = ({ item, onRemoveItem }) => {
   return (
     <li key={item.objectID}>
       <h2>{item.name}</h2>
@@ -132,6 +147,11 @@ const Item = ({ item }) => {
       <p>{item.moons}</p>
       <p>{item.diameter}</p>
       <p>{item.desc}</p>
+      <span>
+        <button type="button" onClick={() => onRemoveItem(item)}>
+          Remove
+        </button>
+      </span>
     </li>
   );
 };
