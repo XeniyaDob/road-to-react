@@ -72,11 +72,17 @@ const App = () => {
   //the component renders again and displays the list of asynchronously loaded stories.
 
   const [planets, setPlanets] = React.useState([]);
+  const [isLoading, setIsLoading]=React.useState(false)
+  const[isError, setIsError]=React.useState(false)
 
   React.useEffect(() => {
+    setIsLoading(true)
+
     getAsyncPlanets().then((result) => {
       setPlanets(result.data.planets);
-    });
+      setIsLoading(false)
+    })
+    .catch(()=>setIsError(true))
   }, []);
 
   const handleRemovePlanet = (item) => {
@@ -109,8 +115,16 @@ const App = () => {
       </InputWithLabel>
 
       <hr />
+      {isError && <p>Something went wrong...</p>}
+      {isLoading?(
+        <p>Loading...</p>
+        ):(
+          <List list={searchedPlanets} 
+          onRemoveItem={handleRemovePlanet} 
+          />
+          )}
 
-      <List list={searchedPlanets} onRemoveItem={handleRemovePlanet} />
+      
     </div>
   );
 };
