@@ -60,18 +60,27 @@ const useSemiPersistentState = (key, initialState) => {
   return [value, setValue];
 };
 
+const planetsReducer = (state, action)=>{
+  switch(action.type){
+    case 'SET_PLANETS':
+    return action.payload;
+  case 'REMOVE_PLANET':
+    return state.filter(
+      (planet)=>action.payload.objectID!==planet.objectID);
+  
+  default:throw new Error()
+    }
+}
+
 const App = () => {
   const [searchTerm, setSearchTerm] = useSemiPersistentState("search", "R");
-  //useSemiPersistentState( "search","R");-- this line of code means a lot,
-  //it searches "r" and rendering all planets that has this string,
-  // the book p.95-->
-  //Once you start the application again, you should see a delayed rendering of the list.
-  //The initial state for the stories is an empty array. After the App component is rendered,
-  //the side-effect hook runs once to fetch the asynchronous data. After
-  //resolving the promise and setting the data in the component’s state,
-  //the component renders again and displays the list of asynchronously loaded stories.
 
-  const [planets, setPlanets] = React.useState([]);
+
+  //const [planets, setPlanets] = React.useState([]);
+  const[planets,dispatchPlanets]=React.useReducer(
+    planetsReducer,
+    []
+  )
   const [isLoading, setIsLoading]=React.useState(false)
   const[isError, setIsError]=React.useState(false)
 
@@ -79,18 +88,27 @@ const App = () => {
     setIsLoading(true)
 
     getAsyncPlanets().then((result) => {
-      setPlanets(result.data.planets);
+      //setPlanets(result.data.planets);
+      dispatchPlanets({
+        type:'SET_PLANETS',
+        payload:result.data.planets
+      });
       setIsLoading(false)
     })
     .catch(()=>setIsError(true))
   }, []);
 
   const handleRemovePlanet = (item) => {
-    const newPlanets = planets.filter(
-      (planet) => item.objectID !== planet.objectID
-    );
+    // const newPlanets = planets.filter(
+    //   (planet) => item.objectID !== planet.objectID
+    // );
+    dispatchPlanets({
+      type:'REMOVE_PLANET',
+      payload:item
+    })
 
-    setPlanets(newPlanets);
+    //setPlanets(newPlanets);
+    
   };
 
   const handleSearch = (event) => {
