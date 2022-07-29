@@ -47,6 +47,11 @@ const getAsyncPlanets = () =>
   new Promise((resolve) =>
     setTimeout(() => resolve({ data: { planets: initialPlanets } }), 2000)
   );
+// const getAsyncPlanets = () =>
+//   new Promise((resolve,reject) =>
+//     setTimeout(() => setTimeout(reject,2000))
+//   );
+
 
 const useSemiPersistentState = (key, initialState) => {
   const [value, setValue] = React.useState(
@@ -62,12 +67,33 @@ const useSemiPersistentState = (key, initialState) => {
 
 const planetsReducer = (state, action)=>{
   switch(action.type){
-    case 'SET_PLANETS':
-    return action.payload;
+    case'PLANETS_FETCH_INIT':
+    return{
+      ...state,
+      isLoading:true,
+      isError:false
+    }
+    case 'PLANETS_FETCH_SUCCESS':
+      return{
+        ...state,
+        isLoading:false,
+        isError:false,
+        data:action.payload
+      }
+      case 'PLANETS_FETCH_FAILURE':
+        return{
+          ...state,
+          isLoading:false,
+          isError:true,
+          
+        }
+   
   case 'REMOVE_PLANET':
-    return state.filter(
-      (planet)=>action.payload.objectID!==planet.objectID);
-  
+    return {
+      ...state,
+      data:state.data.filter(
+      (planet)=>action.payload.objectID!==planet.objectID)
+  }
   default:throw new Error()
     }
 }
@@ -79,23 +105,24 @@ const App = () => {
   //const [planets, setPlanets] = React.useState([]);
   const[planets,dispatchPlanets]=React.useReducer(
     planetsReducer,
-    []
+    {data:[],isLoading:false,isError:false}
   )
-  const [isLoading, setIsLoading]=React.useState(false)
-  const[isError, setIsError]=React.useState(false)
+  // const [isLoading, setIsLoading]=React.useState(false)
+  // const[isError, setIsError]=React.useState(false)
 
   React.useEffect(() => {
-    setIsLoading(true)
+    //setIsLoading(true)
+    dispatchPlanets({type:'PLANETS_FETCH_INIT'})
 
     getAsyncPlanets().then((result) => {
       //setPlanets(result.data.planets);
       dispatchPlanets({
-        type:'SET_PLANETS',
+        type:'PLANETS_FETCH_SUCCESS',
         payload:result.data.planets
       });
-      setIsLoading(false)
+      //setIsLoading(false)
     })
-    .catch(()=>setIsError(true))
+    .catch(()=> dispatchPlanets({type:'PLANETS_FETCH_FAILURE'}))
   }, []);
 
   const handleRemovePlanet = (item) => {
@@ -115,7 +142,7 @@ const App = () => {
     setSearchTerm(event.target.value);
   };
 
-  const searchedPlanets = planets.filter((planet) =>
+  const searchedPlanets = planets.data.filter((planet) =>
     planet.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -133,8 +160,8 @@ const App = () => {
       </InputWithLabel>
 
       <hr />
-      {isError && <p>Something went wrong...</p>}
-      {isLoading?(
+      {planets.isError && <p>Something went wrong...</p>}
+      {planets.isLoading?(
         <p>Loading...</p>
         ):(
           <List list={searchedPlanets} 
