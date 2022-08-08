@@ -1,57 +1,6 @@
-import * as React from "react";
+import * as React from 'react';
 
-const initialPlanets = [
-  {
-    objectID: 1,
-    title: "Mercury",
-    diameter: "3,031.67 mi",
-    moons: "none",
-    desc:
-      "Mercury is the closest planet to the Sun. Due to its proximity, it's not easily seen except during twilight. For every two orbits of the Sun, Mercury completes three rotations about its axis. Up until 1965 it was thought that the same side of Mercury constantly faced the Sun.",
-    img:
-      "https://cdn.mos.cms.futurecdn.net/PFQ97KNjjTebMzenT3GeKd-1024-80.jpg.webp"
-  },
-  {
-    objectID: 2,
-    title: "Venus",
-    diameter: "7,521 mi",
-    moons: "none",
-    desc:
-      "Venus is the second planet from the Sun and is the second brightest object in the night sky after the Moon. Venus is the second largest terrestrial planet and is sometimes referred to as the Earth’s sister planet due the their similar size and mass.",
-    img:
-      "https://cdn.mos.cms.futurecdn.net/oFF43BjXYUyyMTTJLFpeDE-1024-80.jpg.webp"
-  },
-  {
-    objectID: 3,
-    title: "Earth",
-    diameter: "7,917.5 mi",
-    moons: "1",
-    desc:
-      "Earth is the third planet from the Sun and is the largest of the terrestrial planets. The Earth is the only planet in our solar system not to be named after a Greek or Roman deity. The Earth was formed approximately 4.54 billion years ago and is the only known planet to support life.",
-    img:
-      "https://cdn.mos.cms.futurecdn.net/CSa5v4sqMRom94tfjr5scf-1024-80.jpg.webp"
-  },
-  {
-    objectID: 4,
-    title: "Mars",
-    diameter: "4,212 mi",
-    moons: "2",
-    desc:
-      'The fourth planet from the Sun and the second smallest planet in the solar system. Mars is often described as the "Red Planet" due to its reddish appearance. It\'s a terrestrial planet with a thin atmosphere composed primarily of carbon dioxide.',
-    img:
-      "https://cdn.mos.cms.futurecdn.net/E95ZSoxdCKyWZWzkm2EyNe-1024-80.jpg.webp"
-  }
-];
-
-const getAsyncPlanets = () =>
-  new Promise((resolve) =>
-    setTimeout(() => resolve({ data: { planets: initialPlanets } }), 2000)
-  );
-// const getAsyncPlanets = () =>
-//   new Promise((resolve,reject) =>
-//     setTimeout(() => setTimeout(reject,2000))
-//   );
-
+const API_ENDPOINT = 'https://hn.algolia.com/api/v1/search?query=';
 
 const useSemiPersistentState = (key, initialState) => {
   const [value, setValue] = React.useState(
@@ -65,90 +14,84 @@ const useSemiPersistentState = (key, initialState) => {
   return [value, setValue];
 };
 
-const planetsReducer = (state, action)=>{
-  switch(action.type){
-    case'PLANETS_FETCH_INIT':
-    return{
-      ...state,
-      isLoading:true,
-      isError:false
-    }
-    case 'PLANETS_FETCH_SUCCESS':
-      return{
+const storiesReducer = (state, action) => {
+  switch (action.type) {
+    case 'STORIES_FETCH_INIT':
+      return {
         ...state,
-        isLoading:false,
-        isError:false,
-        data:action.payload
-      }
-      case 'PLANETS_FETCH_FAILURE':
-        return{
-          ...state,
-          isLoading:false,
-          isError:true,
-          
-        }
-   
-  case 'REMOVE_PLANET':
-    return {
-      ...state,
-      data:state.data.filter(
-      (planet)=>action.payload.objectID!==planet.objectID)
+        isLoading: true,
+        isError: false,
+      };
+    case 'STORIES_FETCH_SUCCESS':
+      return {
+        ...state,
+        isLoading: false,
+        isError: false,
+        data: action.payload,
+      };
+    case 'STORIES_FETCH_FAILURE':
+      return {
+        ...state,
+        isLoading: false,
+        isError: true,
+      };
+    case 'REMOVE_STORY':
+      return {
+        ...state,
+        data: state.data.filter(
+          (story) => action.payload.objectID !== story.objectID
+        ),
+      };
+    default:
+      throw new Error();
   }
-  default:throw new Error()
-    }
-}
+};
 
 const App = () => {
-  const [searchTerm, setSearchTerm] = useSemiPersistentState("search", "R");
+  const [searchTerm, setSearchTerm] = useSemiPersistentState(
+    'search',
+    'React'
+  );
 
-
-  //const [planets, setPlanets] = React.useState([]);
-  const[planets,dispatchPlanets]=React.useReducer(
-    planetsReducer,
-    {data:[],isLoading:false,isError:false}
-  )
-  // const [isLoading, setIsLoading]=React.useState(false)
-  // const[isError, setIsError]=React.useState(false)
+  const [stories, dispatchStories] = React.useReducer(
+    storiesReducer,
+    { data: [], isLoading: false, isError: false }
+  );
 
   React.useEffect(() => {
-    //setIsLoading(true)
-    dispatchPlanets({type:'PLANETS_FETCH_INIT'})
+    dispatchStories({ type: 'STORIES_FETCH_INIT' });
 
-    getAsyncPlanets().then((result) => {
-      //setPlanets(result.data.planets);
-      dispatchPlanets({
-        type:'PLANETS_FETCH_SUCCESS',
-        payload:result.data.planets
-      });
-      //setIsLoading(false)
-    })
-    .catch(()=> dispatchPlanets({type:'PLANETS_FETCH_FAILURE'}))
+    fetch(`${API_ENDPOINT}react`)
+    .then((response)=>response.json())
+    .then((result) => {
+        dispatchStories({
+          type: 'STORIES_FETCH_SUCCESS',
+          payload: result.hits,
+        });
+      })
+      .catch(() =>
+        dispatchStories({ type: 'STORIES_FETCH_FAILURE' })
+      );
   }, []);
 
-  const handleRemovePlanet = (item) => {
-    // const newPlanets = planets.filter(
-    //   (planet) => item.objectID !== planet.objectID
-    // );
-    dispatchPlanets({
-      type:'REMOVE_PLANET',
-      payload:item
-    })
-
-    //setPlanets(newPlanets);
-    
+  const handleRemoveStory = (item) => {
+    dispatchStories({
+      type: 'REMOVE_STORY',
+      payload: item,
+    });
   };
 
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
   };
 
-  const searchedPlanets = planets.data.filter((planet) =>
-    planet.title.toLowerCase().includes(searchTerm.toLowerCase())
+  const searchedStories = stories.data.filter((story) =>
+    story.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
     <div>
-      <h1>Universe</h1>
+      <h1>My Hacker Stories</h1>
 
       <InputWithLabel
         id="search"
@@ -160,16 +103,17 @@ const App = () => {
       </InputWithLabel>
 
       <hr />
-      {planets.isError && <p>Something went wrong...</p>}
-      {planets.isLoading?(
-        <p>Loading...</p>
-        ):(
-          <List list={searchedPlanets} 
-          onRemoveItem={handleRemovePlanet} 
-          />
-          )}
 
-      
+      {stories.isError && <p>Something went wrong ...</p>}
+
+      {stories.isLoading ? (
+        <p>Loading ...</p>
+      ) : (
+        <List
+          list={searchedStories}
+          onRemoveItem={handleRemoveStory}
+        />
+      )}
     </div>
   );
 };
@@ -177,10 +121,10 @@ const App = () => {
 const InputWithLabel = ({
   id,
   value,
-  type = "text",
+  type = 'text',
   onInputChange,
   isFocused,
-  children
+  children,
 }) => {
   const inputRef = React.useRef();
 
@@ -208,23 +152,26 @@ const InputWithLabel = ({
 const List = ({ list, onRemoveItem }) => (
   <ul>
     {list.map((item) => (
-      <Item key={item.objectID} item={item} onRemoveItem={onRemoveItem} />
+      <Item
+        key={item.objectID}
+        item={item}
+        onRemoveItem={onRemoveItem}
+      />
     ))}
   </ul>
 );
 
 const Item = ({ item, onRemoveItem }) => (
-  <li key={item.objectID}>
+  <li>
     <span>
-      <img src={item.img} alt={item.name} />
+      <a href={item.url}>{item.title}</a>
     </span>
-    <h2>{item.title}</h2>
-    <p>{item.moons}</p>
-    <p>{item.diameter}</p>
-    <p>{item.desc}</p>
+    <span>{item.author}</span>
+    <span>{item.num_comments}</span>
+    <span>{item.points}</span>
     <span>
       <button type="button" onClick={() => onRemoveItem(item)}>
-        Remove
+        Dismiss
       </button>
     </span>
   </li>
