@@ -1,4 +1,5 @@
 import * as React from 'react';
+import axios from 'axios';
 
 const API_ENDPOINT = 'https://hn.algolia.com/api/v1/search?query=';
 
@@ -60,17 +61,19 @@ const App = () => {
     { data: [], isLoading: false, isError: false }
   );
 
-  // React.useEffect(() => {
+
     const handleFetchStories=React.useCallback(()=>{
     if (!searchTerm) return;
     dispatchStories({ type: 'STORIES_FETCH_INIT' });
 
-    fetch(url)
-    .then((response)=>response.json())
+   
+    axios
+    .get(url)
+   
     .then((result) => {
         dispatchStories({
           type: 'STORIES_FETCH_SUCCESS',
-          payload: result.hits,
+          payload: result.data.hits,
         });
       })
       .catch(() =>
@@ -96,9 +99,6 @@ const App = () => {
   const handleSearchSubmit=()=>{
     setUrl(`${API_ENDPOINT}${searchTerm}`)
   }
-  // const searchedStories = stories.data.filter((story) =>
-  //   story.title.toLowerCase().includes(searchTerm.toLowerCase())
-  // );
 
   return (
     <div>
