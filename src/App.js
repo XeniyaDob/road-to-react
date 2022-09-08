@@ -113,30 +113,6 @@ const App = () => {
     </div>
   );
 };
-// class App extends React.Component {
-//   constructor(props) {
-//     super(props);
-//     this.state = {
-//       searchTerm: "React",
-//     };
-//   }
-//   render() {
-//     const { searchTerm } = this.state;
-//     return (
-//       <div>
-//         <h1>My Hacker Stories</h1>
-//         <SearchForm
-//           searchTerm={searchTerm}
-//           onSearchInput={() =>
-//             this.setState({
-//               searchTerm: event.target.value,
-//             })
-//           }
-//         />
-//       </div>
-//     );
-//   }
-// }
 
 const SearchForm = ({ searchTerm, onSearchInput, onSearchSubmit }) => (
   <form onSubmit={onSearchSubmit}>
@@ -156,36 +132,63 @@ const SearchForm = ({ searchTerm, onSearchInput, onSearchSubmit }) => (
     </button>
   </form>
 );
-const InputWithLabel = ({
-  id,
-  value,
-  type = "text",
-  onInputChange,
-  isFocused,
-  children,
-}) => {
-  const inputRef = React.useRef();
+// const InputWithLabel = ({
+//   id,
+//   value,
+//   type = "text",
+//   onInputChange,
+//   isFocused,
+//   children,
+// }) => {
+//   const inputRef = React.useRef();
 
-  React.useEffect(() => {
-    if (isFocused && inputRef.current) {
-      inputRef.current.focus();
+//   React.useEffect(() => {
+//     if (isFocused && inputRef.current) {
+//       inputRef.current.focus();
+//     }
+//   }, [isFocused]);
+
+//   return (
+//     <>
+//       <label htmlFor={id}>{children}</label>
+//       &nbsp;
+//       <input
+//         id={id}
+//         ref={inputRef}
+//         type={type}
+//         value={value}
+//         onChange={onInputChange}
+//       />
+//     </>
+//   );
+// };
+
+class InputWithLabel extends React.Component {
+  constructor(props) {
+    super(props);
+    this.InputRef = React.createRef();
+  }
+  componentDidMount() {
+    if (this.props.isFocused) {
+      this.InputRef.current.focus();
     }
-  }, [isFocused]);
-
-  return (
-    <>
-      <label htmlFor={id}>{children}</label>
-      &nbsp;
-      <input
-        id={id}
-        ref={inputRef}
-        type={type}
-        value={value}
-        onChange={onInputChange}
-      />
-    </>
-  );
-};
+  }
+  render() {
+    return (
+      <>
+        <label htmlFor={id}>{children}</label>
+        &nbsp;
+        <input
+          id={id}
+          ref={this.inputRef}
+          type={type}
+          value={value}
+          onChange={onInputChange}
+        />
+      </>
+    );
+  }
+}
 
 const List = ({ list, onRemoveItem }) => (
   <ul>
