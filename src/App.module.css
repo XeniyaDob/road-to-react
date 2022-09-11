@@ -74,13 +74,13 @@
   background: #171212;
   color: #ffffff;
 }
-.button_small {
+.buttonSmall {
   padding: 5px;
 }
-.button_large {
+.buttonLarge {
   padding: 10px;
 }
-.search-form {
+.searchForm {
   padding: 10px 0 20px 0;
   display: flex;
   align-items: baseline;
@@ -96,4 +96,19 @@
   border-bottom: 1px solid #171212;
   background-color: transparent;
   font-size: 24px;
+}
+.item {
+  display: flex;
+  align-items: center;
+  padding-bottom: 5px;
+}
+.item > span {
+  padding: 0 5px;
+  white-space: nowrap;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.item > span > a {
+  color: inherit;
 }
